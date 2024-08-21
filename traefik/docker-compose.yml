@@ -1,0 +1,30 @@
+networks:
+  proxy:
+    name: proxy
+    external: true
+
+services:
+  traefik:
+    image: traefik:latest
+    command:
+      - --log.level=DEBUG
+      
+      - --providers.docker=true
+      - --providers.docker.exposedbydefault=false
+
+      - --entryPoints.web.address=:80
+      - --entryPoints.websecure.address=:443
+      - --entryPoints.web.http.redirections.entryPoint.to=websecure
+      - --entryPoints.web.http.redirections.entryPoint.scheme=https
+
+      - --certificatesresolvers.resolver.acme.httpchallenge=true
+      - --certificatesresolvers.resolver.acme.httpchallenge.entrypoint=web
+      
+      - --certificatesresolvers.resolver.acme.email=${YOUR_MAIL}
+      - --certificatesresolvers.resolver.acme.storage=/letsencrypt/acme.json
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ./letsencrypt:/letsencrypt
+      - /var/run/docker.sock:/var/run/docker.sock:ro

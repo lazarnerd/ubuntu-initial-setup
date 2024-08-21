@@ -1,3 +1,7 @@
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+ROOT_DIR="${SCRIPT_DIR}/.."
+source "${ROOT_DIR}/.env"
+
 # Install official github cli
 
 # Taken from: https://github.com/cli/cli/blob/trunk/docs/install_linux.md
@@ -13,5 +17,5 @@
 gh auth login
 
 # Set name and mail for git
-git config --global user.name "${GIT_NAME}"
-git config --global user.email "${GIT_MAIL}"
+git config --global user.name "${YOUR_NAME}"
+git config --global user.email "${YOUR_MAIL}"
