@@ -44,16 +44,16 @@ services:
       
       - --certificatesResolvers.cloudflare.acme.dnsChallenge.provider=cloudflare
       - --certificatesResolvers.cloudflare.acme.dnsChallenge.resolvers=1.1.1.1:53,1.0.0.1:53
-    labels:
-      - "traefik.enable=true"
+    # labels:
+    #   - "traefik.enable=true"
 
-      - "traefik.http.routers.traefik.service=api@internal"
+    #   - "traefik.http.routers.traefik.service=api@internal"
       
-      - "traefik.http.routers.traefik.entrypoints=https"
-      - "traefik.http.routers.traefik.rule=Host(`traefik.${LOCAL_DOMAIN}`)"
+    #   - "traefik.http.routers.traefik.entrypoints=https"
+    #   - "traefik.http.routers.traefik.rule=Host(`traefik.${LOCAL_DOMAIN}`)"
 
-      - "traefik.http.routers.traefik.tls=true"
-      - "traefik.http.routers.traefik.tls.certresolver=cloudflare"
-      - "traefik.http.routers.traefik.tls.domains[0].main=${LOCAL_DOMAIN}"
-      - "traefik.http.routers.traefik.tls.domains[0].sans=*.${LOCAL_DOMAIN}"
+    #   - "traefik.http.routers.traefik.tls=true"
+    #   - "traefik.http.routers.traefik.tls.certresolver=cloudflare"
+    #   - "traefik.http.routers.traefik.tls.domains[0].main=${LOCAL_DOMAIN}"
+    #   - "traefik.http.routers.traefik.tls.domains[0].sans=*.${LOCAL_DOMAIN}"
 

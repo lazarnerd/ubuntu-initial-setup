@@ -163,3 +163,4 @@ cython_debug/
 
 
 .env
+/traefik/letsencrypt/acme.json
