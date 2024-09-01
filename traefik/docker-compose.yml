@@ -23,8 +23,8 @@ services:
       - CF_API_EMAIL=${YOUR_MAIL}
       - CF_API_KEY=${CLOUDFLARE_API_KEY}
     command:
-      - --api.dashboard=true
-      - --api.debug=true
+      # - --api.dashboard=true
+      # - --api.debug=true
 
       - --log.level=DEBUG
       
@@ -56,4 +56,3 @@ services:
     #   - "traefik.http.routers.traefik.tls.certresolver=cloudflare"
     #   - "traefik.http.routers.traefik.tls.domains[0].main=${LOCAL_DOMAIN}"
     #   - "traefik.http.routers.traefik.tls.domains[0].sans=*.${LOCAL_DOMAIN}"
-
