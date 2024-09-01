@@ -1,30 +1,60 @@
+name: traefik
+
 networks:
   proxy:
-    name: proxy
     external: true
 
 services:
   traefik:
     image: traefik:latest
+    container_name: traefik
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    networks:
+      - proxy
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./letsencrypt:/letsencrypt
+    environment:
+      - CF_API_EMAIL=${YOUR_MAIL}
+      - CF_API_KEY=${CLOUDFLARE_API_KEY}
     command:
+      - --api.dashboard=true
+      - --api.debug=true
+
       - --log.level=DEBUG
       
       - --providers.docker=true
       - --providers.docker.exposedbydefault=false
 
-      - --entryPoints.web.address=:80
-      - --entryPoints.websecure.address=:443
-      - --entryPoints.web.http.redirections.entryPoint.to=websecure
-      - --entryPoints.web.http.redirections.entryPoint.scheme=https
-
-      - --certificatesresolvers.resolver.acme.httpchallenge=true
-      - --certificatesresolvers.resolver.acme.httpchallenge.entrypoint=web
+      - --entryPoints.http.address=:80
+      - --entryPoints.https.address=:443
       
-      - --certificatesresolvers.resolver.acme.email=${YOUR_MAIL}
-      - --certificatesresolvers.resolver.acme.storage=/letsencrypt/acme.json
-    ports:
-      - 80:80
-      - 443:443
-    volumes:
-      - ./letsencrypt:/letsencrypt
-      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - --entryPoints.http.http.redirections.entryPoint.to=https
+      - --entryPoints.http.http.redirections.entryPoint.scheme=https
+
+      - --serversTransport.insecureSkipVerify=true
+
+      - --certificatesResolvers.cloudflare.acme.email=${YOUR_MAIL}
+      - --certificatesResolvers.cloudflare.acme.storage=/letsencrypt/acme.json
+      
+      - --certificatesResolvers.cloudflare.acme.dnsChallenge.provider=cloudflare
+      - --certificatesResolvers.cloudflare.acme.dnsChallenge.resolvers=1.1.1.1:53,1.0.0.1:53
+    labels:
+      - "traefik.enable=true"
+
+      - "traefik.http.routers.traefik.service=api@internal"
+      
+      - "traefik.http.routers.traefik.entrypoints=https"
+      - "traefik.http.routers.traefik.rule=Host(`traefik.${LOCAL_DOMAIN}`)"
+
+      - "traefik.http.routers.traefik.tls=true"
+      - "traefik.http.routers.traefik.tls.certresolver=cloudflare"
+      - "traefik.http.routers.traefik.tls.domains[0].main=${LOCAL_DOMAIN}"
+      - "traefik.http.routers.traefik.tls.domains[0].sans=*.${LOCAL_DOMAIN}"
+
